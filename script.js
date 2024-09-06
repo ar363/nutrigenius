@@ -1,10 +1,12 @@
 // Imports
-import { fdc_ids_as_array } from "./constants.js";
+import { fdc_ids_as_array, ind_ids } from "./constants.js";
 // import { getFoodData, get_all_food_data_from_supabase, showCorrectButtons } from "./get_data.js";
 import { uuidv4 } from "./utils.js"
 
 // Loading data
 console.log(`Loaded data for following FDC IDs: ${fdc_ids_as_array}`);
+// console.log(`Loaded data for following IND IDs: ${JSON.stringify(ind_ids)}`);
+
 
 // Check to see if TF.js is available
 console.log(`Loaded TensorFlow.js - version: ${tf.version.tfjs}`);
@@ -64,6 +66,7 @@ function getImage() {
             // if not, post a message saying no food found, please try another.
             if (foodNotFood(foodNotFoodModel, currImage)) {
                 classifyImage(foodVisionModel, currImage);
+                classifyIndianFood(indianFoodVisionModel, currImage);
             } else {
                 // Update HTML to reflect no food
                 predicted_class.textContent = "No food found, please try another image."
@@ -90,9 +93,11 @@ uploadButton.addEventListener("click", () => fileInput.click());
 
 // Setup the model(s) code
 let foodVisionModel; // This is in global scope
+let indianFoodVisionModel;
 let foodNotFoodModel;
 
 const foodVisionModelStringPath = "models/2022-01-16-nutrify_model_100_foods_manually_cleaned_10_classes_foods_v1.tflite"
+const indianFoodVisionModelStringPath = "models/ind.tflite"
 const foodNotFoodModelStringPath = "models/2022-03-18_food_not_food_model_efficientnet_lite0_v1.tflite"
 
 const loadModel = async () => {
@@ -101,6 +106,9 @@ const loadModel = async () => {
     try {
         const foodVisionTFLiteModel = await tflite.loadTFLiteModel(
             foodVisionModelStringPath
+        );
+        const indianFoodVisionTFLiteModel = await tflite.loadTFLiteModel(
+            indianFoodVisionModelStringPath
         );
         const foodNotFoodTFLiteModel = await tflite.loadTFLiteModel(
             foodNotFoodModelStringPath
@@ -113,6 +121,9 @@ const loadModel = async () => {
         foodNotFoodModel = foodNotFoodTFLiteModel
         console.log(`Loaded model: ${foodNotFoodModelStringPath}`)
 
+        indianFoodVisionModel = indianFoodVisionTFLiteModel
+        console.log(`Loaded model: ${indianFoodVisionModelStringPath}`)
+
     } catch (error) {
         console.log(error);
     }
@@ -120,6 +131,29 @@ const loadModel = async () => {
 
 // Load model and data
 loadModel();
+
+function classifyIndianFood(model, image) {
+    // Preprocess image
+    image = tf.image.resizeBilinear(image, [180, 180]); // image size needs to be same as model inputs - EffNetB0 takes 224x224
+    image = tf.expandDims(image);
+
+    // console.log(tflite.getDTypeFromTFLiteType("uint8")); // Gives int32 as output thus we cast int32 in below line
+    console.log("Converting image to different datatype...");
+    image = tf.cast(image, "int32"); // Model requires uint8
+    console.log("Model about to predict what kind of food it is...");
+    const output = model.predict(image);
+    const output_values = tf.softmax(output.arraySync()[0]);
+
+    console.log("Output of model:");
+    console.log(output.arraySync()[0]); // arraySync() Returns an array to use
+
+    console.log("After calling softmax on the output:");
+    console.log(output_values.arraySync());
+
+    console.log("ind food")
+    const predicted_class_string = ind_ids[output_values.argMax().arraySync()]
+    predicted_class.innerHTML += '<br>IND: ' + predicted_class_string
+}
 
 // Function to classify image
 function classifyImage(model, image) {
@@ -152,9 +186,6 @@ function classifyImage(model, image) {
     // Get data from Supabase and update HTML
     // getFoodData(predicted_class_string, data);
     console.log(predicted_class_string)
-
-    // Show "is this correct?" buttons
-    showCorrectButtons(uuid);
 }
 
 

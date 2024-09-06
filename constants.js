@@ -103,6 +103,29 @@ export const fdc_ids = {
     169291: 'Zucchini',
 };
 
+export const ind_ids = {
+    0: "burger",
+    1: "butter_naan",
+    2: "chai",
+    3: "chapati",
+    4: "chole_bhature",
+    5: "dal_makhani",
+    6: "dhokla",
+    7: "fried_rice",
+    8: "idli",
+    9: "jalebi",
+    10: "kaathi_rolls",
+    11: "kadai_paneer",
+    12: "kulfi",
+    13: "masala_dosa",
+    14: "momos",
+    15: "paani_puri",
+    16: "pakode",
+    17: "pav_bhaji",
+    18: "pizza",
+    19: "samosa"
+};
+
 export const fdc_ids_as_array = Object.values(fdc_ids).sort();
 
 // Setup fdc_ids reversed mapped with food names as index
