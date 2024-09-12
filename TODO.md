@@ -1,13 +1,14 @@
 # List of things for Nutrigenius
 
 - [ ]  Develop CalorieCraft AI:
-    - [ ]  Create image recognition model for calorie estimation
-    - [ ]  Implement machine learning algorithms
-    - [ ]  Integrate scale for accuracy enhancement
+    - [x]  Create image recognition model for calorie estimation
+    - [x]  Implement machine learning algorithms
+    - ~~[ ]  Integrate scale for accuracy enhancement (N/A)~~
+    - [ ]  Get food data for all the items
     - [ ]  Develop diet tracking integration
 - [ ]  Build PantryPilot system:
-    - [ ]  Develop computer vision technology for inventory tracking
-    - [ ]  Implement real-time data collection from scales
+    - [X]  Develop computer vision technology for inventory tracking
+    - ~~[ ]  Implement real-time data collection from scales (N/A)~~
     - [ ]  Create alert system for low stock
     - [ ]  Design restocking suggestion feature
 - [ ]  Create EatSmart Dietitian AI:

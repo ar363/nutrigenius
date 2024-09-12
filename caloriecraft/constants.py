@@ -116,7 +116,7 @@ sorted_indian_foods = [
     "kaathi_rolls",
     "kadai_paneer",
     "kulfi",
-    "masala_dosa",
+    "dosa",
     "momos",
     "paani_puri",
     "pakode",

@@ -1,6 +1,11 @@
 import tensorflow as tf
 from django.conf import settings
 from . import constants
+import torch
+import torch.nn as nn
+from torchvision import models, transforms
+from PIL import Image
+import io
 
 
 def preprocess_image(image, target_size):
@@ -16,9 +21,24 @@ def preprocess_image(image, target_size):
     return image
 
 
+def preprocess_ind_image(raw_image):
+    image = Image.open(io.BytesIO(raw_image))
+    preprocess = transforms.Compose(
+        [
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
+    input_tensor = preprocess(image)
+    input_batch = input_tensor.unsqueeze(0)  # Add a batch dimension
+    return input_batch
+
+
 def us_predictor(decoded_image):
     us_model = tf.lite.Interpreter(
-        model_path=str(settings.BASE_DIR / "old" / "models" / "usfoods.tflite")
+        model_path=str(settings.BASE_DIR / "ai-models" / "usfoods.tflite")
     )
 
     us_model.allocate_tensors()
@@ -49,38 +69,50 @@ def us_predictor(decoded_image):
         json_op.append(
             {
                 "name": coll_output[0][i].replace("_", " ").title(),
-                "top5_confidence": float(tf.squeeze(coll_output[1][i])),
-                "total_confidence": float(coll_output[2][i]),
+                "confidence": (float(coll_output[2][i]) * 100),
             }
         )
 
     return json_op
 
 
-def ind_predictor(decoded_image):
-    ind_model = tf.keras.models.load_model(
-        str(settings.BASE_DIR / "old" / "models" / "ind_softmax.keras")
+def load_ind_model():
+    model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+    model.fc = nn.Linear(
+        model.fc.in_features, 1000
+    )  # Adjust to match the original model's output units
+    model.load_state_dict(
+        torch.load(
+            settings.BASE_DIR / "ai-models" / "indianfoods_classification_model.pth",
+            weights_only=False,
+        )
     )
-    ind_image = preprocess_image(decoded_image, 180)
-    ind_pred = ind_model.predict(ind_image)
-    ind_names = [
-        constants.sorted_indian_foods[i]
-        for i in tf.math.top_k(ind_pred, k=3).indices.numpy()[0]
+    model.eval()
+
+    return model
+
+
+ind_model = load_ind_model()
+
+
+def ind_predictor(image_path):
+    image = preprocess_ind_image(image_path)
+    model = ind_model
+
+    with torch.no_grad():
+        output = model(image)
+
+    predicted_classes = torch.topk(output, 3)
+
+    predicted_class_names = [
+        constants.sorted_indian_foods[i] for i in predicted_classes.indices.tolist()[0]
     ]
-    ind_probs = [i for i in tf.math.top_k(ind_pred, k=3).values.numpy()[0]]
-    ind_probs_top5 = [
-        i
-        for i in tf.math.top_k(ind_pred, k=3).values.numpy()[0]
-        / tf.math.reduce_sum(tf.math.top_k(ind_pred, k=5).values.numpy()[0])
-    ]
+    predicted_class_probs = predicted_classes.values.tolist()[0]
+
     json_op = []
     for i in range(3):
-        json_op.append(
-            {
-                "name": ind_names[i].replace("_", " ").title(),
-                "top5_confidence": float(tf.squeeze(ind_probs_top5[i])),
-                "total_confidence": float(ind_probs[i]),
-            }
-        )
+        name = predicted_class_names[i].replace("_", " ").title()
+        prob = predicted_class_probs[i]
+        json_op.append({"name": name, "confidence": prob})
 
     return json_op

@@ -1,0 +1,23 @@
+version: 3
+
+tasks:
+  djdev:
+    cmds:
+      - python3 manage.py runserver
+    desc: Run Django development server
+  
+  yolodev:
+    cmds:
+      - UVICORN_PORT=7001 uvicorn apis.yolo5_api:app
+    desc: Run Yolo development server
+
+  uidev:
+    dir: frontend
+    cmds:
+      - npm run dev
+    desc: Run UI development server
+
+  dev:
+    cmds:
+      - task -p djdev yolodev uidev
+    desc: Run all development servers

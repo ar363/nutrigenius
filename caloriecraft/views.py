@@ -6,7 +6,7 @@ import tensorflow as tf
 from ninja.files import UploadedFile
 from .ai import us_predictor, ind_predictor
 
-api = NinjaAPI()
+api = NinjaAPI(title="CalorieCraft API", version="1.0.0")
 
 
 @api.get("/ping")
@@ -20,6 +20,7 @@ def predict_img(request, file: UploadedFile = File(...)):
     image = tf.image.decode_image(raw_image)
 
     us_ob = us_predictor(image)
-    in_ob = ind_predictor(image)
+    in_ob = ind_predictor(raw_image)
+    print(in_ob)
 
     return {"us": us_ob, "ind": in_ob}
