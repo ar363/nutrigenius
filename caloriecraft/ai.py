@@ -71,6 +71,7 @@ def us_predictor(decoded_image):
             {
                 "name": coll_output[0][i].replace("_", " ").title(),
                 "confidence": (float(coll_output[2][i]) * 100) * 100 - 100,
+                "food_info": constants.get_us_food_data(coll_output[0][i]),
             }
         )
 
@@ -113,8 +114,9 @@ def ind_predictor(image_path):
     json_op = []
     for i in range(3):
         name = predicted_class_names[i].replace("_", " ").title()
+        food_info = constants.get_ind_food_data(name)
         prob = predicted_class_probs[i]
-        json_op.append({"name": name, "confidence": prob})
+        json_op.append({"name": name, "confidence": prob, "food_info": food_info})
 
     return json_op
 
@@ -132,13 +134,14 @@ def recipe_ai(message):
         messages=[
             {
                 "role": "system",
-                "content": "You are a professional Data Analyst Dietian, you must understand inputted data and give professional advice and consulting.",
+                "content": "You are a professional Data Analyst Dietian, you must understand inputted data and give professional advice and consulting. your response must be in JSON",
             },
             {
                 "role": "user",
                 "content": f"Based on what the nutrition content of the dish/meal that is provided is, rate the choice for a balanced healthy diet\n{message}.",
             },
         ],
+        response_format={"type": "json_object"},
     )
 
     return completion.choices[0].message

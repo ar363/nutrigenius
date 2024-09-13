@@ -35,15 +35,15 @@
 <div class="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
 	<header class="container mx-auto flex items-center justify-between px-4 py-6">
 		<div class="flex items-center space-x-2">
-			<span class="text-2xl font-bold text-gray-800">
+			<span class="text-2xl font-bold text-gray-800 max-w-[220px]">
 				<img src="/nutrigeniuslogo.png" alt="">
 			</span>
 		</div>
 		<nav>
 			<ul class="flex space-x-4">
-				<li><a href="#" class="text-gray-600 hover:text-gray-800">Home</a></li>
-				<li><a href="#" class="text-gray-600 hover:text-gray-800">About</a></li>
-				<li><a href="#" class="text-gray-600 hover:text-gray-800">Contact</a></li>
+				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">Home</a></li>
+				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">About</a></li>
+				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">Contact</a></li>
 			</ul>
 		</nav>
 	</header>
@@ -67,7 +67,7 @@
 					Sign Up Now
 				</button>
 			{:else}
-				<a
+				<a data-sveltekit-reload
 					href="/dashboard"
 					class="rounded-lg bg-green-600 px-6 py-3 text-lg font-bold text-white hover:bg-green-700"
 					>Go to dashboard</a

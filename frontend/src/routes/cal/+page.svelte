@@ -8,6 +8,7 @@
 	let activeTab: 'IN' | 'US' = 'IN';
 	let tabViewMore = false;
 	let selectedFood: string;
+	let meal: object;
 
 	const formSubmit = async () => {
 		const formData = new FormData();
@@ -58,11 +59,12 @@
 	}
 
 	function setSelectedFood(food: string) {
-		selectedFood = food;
+		selectedFood = food.name;
+		meal = food.food_info;
 	}
 </script>
 
-<div class="bg-purple-200 min-h-screen">
+<div class="min-h-screen bg-purple-200">
 	<div class="mx-auto max-w-screen-xl p-4">
 		<h1 class="mb-6 text-xl font-semibold">CalorieCraft AI</h1>
 		{#if !selectedFood}
@@ -116,7 +118,7 @@
 							<div class="card-actions justify-start">
 								<button
 									class="btn btn-primary btn-sm"
-									on:click={() => setSelectedFood(result.ind[0].name)}>Next &rarr;</button
+									on:click={() => setSelectedFood(result.ind[0])}>Next &rarr;</button
 								>
 							</div>
 						</div>
@@ -130,7 +132,7 @@
 								<div class="card-actions justify-start">
 									<button
 										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.ind[1].name)}>Next &rarr;</button
+										on:click={() => setSelectedFood(result.ind[1])}>Next &rarr;</button
 									>
 								</div>
 							</div>
@@ -143,7 +145,7 @@
 								<div class="card-actions justify-start">
 									<button
 										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.ind[2].name)}>Next &rarr;</button
+										on:click={() => setSelectedFood(result.ind[2])}>Next &rarr;</button
 									>
 								</div>
 							</div>
@@ -164,7 +166,7 @@
 							<div class="card-actions justify-start">
 								<button
 									class="btn btn-primary btn-sm"
-									on:click={() => setSelectedFood(result.us[0].name)}>Next &rarr;</button
+									on:click={() => setSelectedFood(result.us[0])}>Next &rarr;</button
 								>
 							</div>
 						</div>
@@ -178,7 +180,7 @@
 								<div class="card-actions justify-start">
 									<button
 										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.us[1].name)}>Next &rarr;</button
+										on:click={() => setSelectedFood(result.us[1])}>Next &rarr;</button
 									>
 								</div>
 							</div>
@@ -191,7 +193,7 @@
 								<div class="card-actions justify-start">
 									<button
 										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.us[2].name)}>Next &rarr;</button
+										on:click={() => setSelectedFood(result.us[2])}>Next &rarr;</button
 									>
 								</div>
 							</div>
@@ -209,7 +211,28 @@
 			{/if}
 		{:else}
 			<h2 class="mt-4 text-2xl font-bold">{selectedFood}</h2>
-			<p>???</p>
+
+			{#if meal}
+				<h3 class="mt-4 text-md font-semibold">Per serving:</h3>
+				<ul class="ml-4 mt-2 list-disc">
+					<li>{meal.calories} calories</li>
+					<li>{meal.protein}g Protein</li>
+					<li>{meal.fat}g Fat</li>
+					<li>{meal.carbs}g Carbs</li>
+					<li class={meal.sodium > 100 ? 'text-red-700' : ''}>
+						{meal.sodium}mg Sodium
+					</li>
+					{#if meal.vitamins}
+						<li class="text-emerald-600">Rich in Vitamin {meal.vitamins}</li>
+					{/if}
+					{#if meal.fiber && meal.fiber > 2}
+						<li>{meal.fiber}g Fiber</li>
+					{:else}
+						<li class="text-red-700">Very low fiber</li>
+					{/if}
+				</ul>
+			{/if}
+
 			<form method="post" on:submit|preventDefault={addFoodToDiet} id="add_food_form">
 				<input type="hidden" name="sel_food" value={selectedFood} />
 				<input

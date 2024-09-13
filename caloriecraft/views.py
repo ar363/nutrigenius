@@ -12,7 +12,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # stop yapping tensorflow
 import tensorflow as tf
 from ninja.files import UploadedFile
 from .ai import us_predictor, ind_predictor
-from .models import FoodHistory
+from .models import FoodHistory, Pantry
 
 api = NinjaAPI(title="CalorieCraft API", version="1.0.0")
 
@@ -79,6 +79,27 @@ def add_food(request, data: AddFoodData):
         food=data.sel_food,
         quantity=data.qty,
     )
+
+    return {"message": "add-food"}
+
+
+class AddPantryData(Schema):
+    name: str
+    count: int
+
+
+@api.post("/add-pantry", auth=auth)
+def add_pantry(request, data: List[AddPantryData]):
+
+    for i in data:
+        _, created = Pantry.objects.get_or_create(
+            name=i.name, user_id=request.auth, defaults={"quantity": i.count}
+        )
+
+        if not created:
+            pantry = Pantry.objects.get(name=i.name, user_id=request.auth)
+            pantry.quantity += i.count
+            pantry.save()
 
     return {"message": "add-food"}
 

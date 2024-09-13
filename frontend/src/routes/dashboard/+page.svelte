@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { formatDistance } from 'date-fns';
 	import { onMount } from 'svelte';
+	import { Doughnut } from 'svelte-chartjs';
+	import { formatDistance } from 'date-fns';
+	import 'chart.js/auto'; // Ensure you import this to auto-register all components
 
 	let pastMeals = [];
 
@@ -15,7 +17,20 @@
 	});
 
 	function relTime(dt: string) {
-		return formatDistance(dt, new Date(), { addSuffix: true });
+		return formatDistance(new Date(dt), new Date(), { addSuffix: true });
+	}
+
+	function calcData(mealdata: any) {
+		return {
+			labels: ['Protein', 'Fat', 'Carbs'],
+			datasets: [
+				{
+					data: [mealdata.protein, mealdata.fat, mealdata.carbs],
+					backgroundColor: ['#009EDB', '#f50', '#008037'],
+					hoverBackgroundColor: ['#009EDB', '#f50', '#008037']
+				}
+			]
+		};
 	}
 </script>
 
@@ -24,55 +39,72 @@
 		<img src="/nutrigeniuslogo.png" alt="" class="-ml-[20px] w-[450px]" />
 	</h1>
 	<div class="mt-4">
-		<h2 class="text-xl">Past meals</h2>
+		<div class="mb-5 mt-6 grid md:grid-cols-4 gap-4">
+			<a href="/cal">
+				<div class="card w-full max-w-96 border bg-purple-200 shadow-xl">
+					<div class="card-body">
+						<h2 class="card-title">CalorieCraft AI</h2>
+						<p>Track nutrition intake using images of your food</p>
+					</div>
+				</div>
+			</a>
+			<a href="/pantry">
+				<div class="card w-full max-w-96 border bg-pink-100 shadow-xl">
+					<div class="card-body">
+						<h2 class="card-title">PantryPilot AI</h2>
+						<p>Check how much stock of food your refridgerator has</p>
+					</div>
+				</div>
+			</a>
+			<a href="/eatsmart">
+				<div class="card w-full max-w-96 border bg-lime-100 shadow-xl">
+					<div class="card-body">
+						<h2 class="card-title">EatSmart Dietician</h2>
+						<p>AI powered dietician based on realtime data</p>
+					</div>
+				</div>
+			</a>
+			<a href="/reciperevolution">
+				<div class="card w-full max-w-96 border bg-amber-100 shadow-xl">
+					<div class="card-body">
+						<h2 class="card-title">RecipeRevolution AI</h2>
+						<p>AI powered dietician based on realtime data</p>
+					</div>
+				</div>
+			</a>
+		</div>
 
-		<table class="table border">
-			<thead>
-				<tr>
-					<th>Food</th>
-					<th>Quantity</th>
-					<th>Calories</th>
-					<th>Protein</th>
-					<th>Fat</th>
-					<th>Carbs</th>
-					<th>Sodium</th>
-					<th>Time</th>
-				</tr>
-			</thead>
-			<tbody>
-				{#each pastMeals as meal}
-					<tr>
-						<td>{meal.food}</td>
-						<td>{meal.quantity}</td>
-						<td>{meal.food_data.calories}</td>
-						<td>{meal.food_data.protein}g</td>
-						<td>{meal.food_data.fat}g</td>
-						<td>{meal.food_data.carbs}g</td>
-						<td class={meal.food_data.sodium > 100 ? 'text-red-700' : ''}
-							>{meal.food_data.sodium}mg</td
-						>
-						<td>{relTime(meal.created_at)}</td>
-					</tr>
-				{/each}
-			</tbody>
-		</table>
-	</div>
-	<div class="mt-6 grid grid-cols-4 gap-4">
-		<a href="/cal">
-			<div class="card w-full max-w-96 border bg-purple-200 shadow-xl">
-				<div class="card-body">
-					<h2 class="card-title">CalorieCraft AI</h2>
-					<p>Track nutrition intake using images of your food</p>
+		<h2 class="mt-4 text-lg">Past meals</h2>
+
+		<div class="mt-5 grid gap-4 md:grid-cols-4">
+			{#each pastMeals as meal}
+				<div class="card border">
+					<div class="card-body">
+						<h2 class="card-title">{meal.food}</h2>
+						<p class="-mt-1 text-xs text-gray-600">{relTime(meal.created_at)}</p>
+						<div class="w-[200px]">
+							<Doughnut data={calcData(meal.food_data)} />
+						</div>
+						<ul class="ml-4 mt-2 list-disc">
+							<li>{meal.food_data.calories} calories</li>
+							<li>{meal.food_data.protein}g Protein</li>
+							<li>{meal.food_data.fat}g Fat</li>
+							<li>{meal.food_data.carbs}g Carbs</li>
+							<li class={meal.food_data.sodium > 100 ? 'text-red-700' : ''}>
+								{meal.food_data.sodium}mg Sodium
+							</li>
+							{#if meal.food_data.vitamins}
+								<li class="text-emerald-600">Rich in Vitamin {meal.food_data.vitamins}</li>
+							{/if}
+							{#if meal.food_data.fiber && meal.food_data.fiber > 2}
+								<li>{meal.food_data.fiber}g Fiber</li>
+							{:else}
+								<li class="text-red-700">Very low fiber</li>
+							{/if}
+						</ul>
+					</div>
 				</div>
-			</div>
-		</a>
-		<a href="/pantry">
-			<div class="card w-full max-w-96 border bg-pink-100 shadow-xl">
-				<div class="card-body">
-					<h2 class="card-title">PantryPilot AI</h2>
-					<p>Check how much stock of food your refridgerator has</p>
-				</div>
-			</div>
-		</a>
+			{/each}
+		</div>
 	</div>
 </div>

@@ -21,11 +21,41 @@
 			const data = await res.json();
 			avatar = data.img.slice(15);
 
+			let fres = [];
 			for (let dx of data.op) {
+				if (fres.map((x) => x.name).includes(dx.name)) {
+					let idx = fres.map((x) => x.name).indexOf(dx['name']);
+					fres[idx]['count'] += 1;
+				} else {
+					fres.push({
+						name: dx.name,
+						count: 1
+					});
+				}
 			}
+			result = fres;
 		} catch (error) {
 			console.error(error);
 		}
+	};
+
+	const addToPantry = async () => {
+		fetch('http://localhost:8000/cc/api/add-pantry', {
+			method: 'POST',
+			body: JSON.stringify(result),
+			headers: {
+				Authorization: `Bearer ${getUserToken()}`,
+				'Content-Type': 'application/json'
+			}
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				console.log(data);
+				goto('/dashboard');
+			})
+			.catch((error) => {
+				console.error(error);
+			});
 	};
 
 	const addFoodToDiet = async () => {
@@ -79,131 +109,35 @@
 				<button type="submit" class="btn btn-accent mt-4">What is in this pantry?</button>
 			</form>
 
-			{#if avatar}
-				<div class="mt-4">
-					<img src={avatar} alt="avatar" class="h-full w-full rounded-md" />
-				</div>
-			{/if}
-
-			{#if result}
-				<div role="tablist" class="tabs tabs-boxed mt-6 max-w-xs">
-					<button
-						role="tab"
-						class={`tab ${activeTab == 'IN' ? 'tab-active' : ''}`}
-						on:click={() => {
-							activeTab = 'IN';
-							tabViewMore = false;
-						}}>FSSAI Model</button
-					>
-					<button
-						role="tab"
-						class={`tab ${activeTab == 'US' ? 'tab-active' : ''}`}
-						on:click={() => {
-							activeTab = 'US';
-							tabViewMore = false;
-						}}>FDA Model</button
-					>
-				</div>
-
-				{#if activeTab == 'IN'}
-					<div class="card bg-base-100 mt-4 w-full max-w-96 border shadow-lg">
-						<div class="card-body">
-							<h2 class="card-title">{result.ind[0].name}</h2>
-							<p>Confidence: {round2(result.ind[0].confidence)}</p>
-							<div class="card-actions justify-start">
-								<button
-									class="btn btn-primary btn-sm"
-									on:click={() => setSelectedFood(result.ind[0].name)}>Next &rarr;</button
-								>
-							</div>
-						</div>
+			<div class="flex gap-4">
+				{#if avatar}
+					<div class="mt-4">
+						<img src={avatar} alt="avatar" class="h-full w-full rounded-md" />
 					</div>
-
-					{#if tabViewMore}
-						<div class="card bg-base-100 mt-4 w-full max-w-96 border shadow-lg">
-							<div class="card-body">
-								<h2 class="card-title">{result.ind[1].name}</h2>
-								<p>Confidence: {round2(result.ind[1].confidence)}</p>
-								<div class="card-actions justify-start">
-									<button
-										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.ind[1].name)}>Next &rarr;</button
-									>
-								</div>
-							</div>
-						</div>
-
-						<div class="card bg-base-100 mt-4 w-full max-w-96 border shadow-lg">
-							<div class="card-body">
-								<h2 class="card-title">{result.ind[2].name}</h2>
-								<p>Confidence: {round2(result.ind[2].confidence)}</p>
-								<div class="card-actions justify-start">
-									<button
-										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.ind[2].name)}>Next &rarr;</button
-									>
-								</div>
-							</div>
-						</div>
-					{:else}
-						<button
-							type="button"
-							class="btn btn-sm mt-6"
-							on:click={() => {
-								tabViewMore = true;
-							}}>View More</button
-						>
-					{/if}
-				{:else}<div class="card bg-base-100 mt-4 w-full max-w-96 border shadow-lg">
-						<div class="card-body">
-							<h2 class="card-title">{result.us[0].name}</h2>
-							<p>Confidence: {round2(result.us[0].confidence)}</p>
-							<div class="card-actions justify-start">
-								<button
-									class="btn btn-primary btn-sm"
-									on:click={() => setSelectedFood(result.us[0].name)}>Next &rarr;</button
-								>
-							</div>
-						</div>
-					</div>
-
-					{#if tabViewMore}
-						<div class="card bg-base-100 mt-4 w-full max-w-96 border shadow-lg">
-							<div class="card-body">
-								<h2 class="card-title">{result.us[1].name}</h2>
-								<p>Confidence: {round2(result.us[1].confidence)}</p>
-								<div class="card-actions justify-start">
-									<button
-										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.us[1].name)}>Next &rarr;</button
-									>
-								</div>
-							</div>
-						</div>
-
-						<div class="card bg-base-100 mt-4 w-full max-w-96 border shadow-lg">
-							<div class="card-body">
-								<h2 class="card-title">{result.us[2].name}</h2>
-								<p>Confidence: {round2(result.us[2].confidence)}</p>
-								<div class="card-actions justify-start">
-									<button
-										class="btn btn-primary btn-sm"
-										on:click={() => setSelectedFood(result.us[2].name)}>Next &rarr;</button
-									>
-								</div>
-							</div>
-						</div>
-					{:else}
-						<button
-							class="btn btn-sm mt-6"
-							type="button"
-							on:click={() => {
-								tabViewMore = true;
-							}}>View More</button
-						>
-					{/if}
 				{/if}
-			{/if}
+
+				{#if result}
+					<form on:submit|preventDefault={addToPantry}>
+						<div class="mt-4 grid w-full grid-cols-3 gap-4">
+							{#each result as food}
+								<div class="card bg-pink-50">
+									<div class="card-body">
+										<h2 class="card-title">{food.name}</h2>
+										<label class="label" for={`fc__${food.name}`}>Count:</label>
+										<input
+											type="number"
+											bind:value={food.count}
+											id={`fc__${food.name}`}
+											class="input input-bordered"
+										/>
+									</div>
+								</div>
+							{/each}
+						</div>
+						<button type="submit" class="btn btn-primary mt-4">Add to pantry</button>
+					</form>
+				{/if}
+			</div>
 		{:else}
 			<h2 class="mt-4 text-2xl font-bold">{selectedFood}</h2>
 			<p>???</p>
