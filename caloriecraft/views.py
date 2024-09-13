@@ -1,4 +1,4 @@
-from ninja import NinjaAPI, File, Schema
+from ninja import NinjaAPI, File, Schema, Field
 from ninja.security import HttpBearer
 from django.http import HttpResponse
 import os
@@ -87,6 +87,7 @@ class PastMealSchema(Schema):
     food: str
     quantity: int
     created_at: datetime
+    food_data: dict = Field(None, alias="get_food_data")
 
 
 @api.get("/past-meals", auth=auth, response=List[PastMealSchema])

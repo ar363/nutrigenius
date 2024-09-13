@@ -35,7 +35,9 @@
 <div class="min-h-screen bg-gradient-to-b from-green-50 to-blue-50">
 	<header class="container mx-auto flex items-center justify-between px-4 py-6">
 		<div class="flex items-center space-x-2">
-			<span class="text-2xl font-bold text-gray-800">NutriGenius</span>
+			<span class="text-2xl font-bold text-gray-800">
+				<img src="/nutrigeniuslogo.png" alt="">
+			</span>
 		</div>
 		<nav>
 			<ul class="flex space-x-4">

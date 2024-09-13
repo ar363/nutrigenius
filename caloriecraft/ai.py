@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
+from openai import OpenAI
 import io
 
 
@@ -116,3 +117,28 @@ def ind_predictor(image_path):
         json_op.append({"name": name, "confidence": prob})
 
     return json_op
+
+
+def recipe_ai(message):
+
+    client = OpenAI(
+        api_key=settings.OPENAI_API_KEY,
+        organization="org-91yq2CPSx8C1LuufNeb0tdWk",
+        project="proj_P77Tb9d0K1ij8vdGHV4weSZi",
+    )
+
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a professional Data Analyst Dietian, you must understand inputted data and give professional advice and consulting.",
+            },
+            {
+                "role": "user",
+                "content": f"Based on what the nutrition content of the dish/meal that is provided is, rate the choice for a balanced healthy diet\n{message}.",
+            },
+        ],
+    )
+
+    return completion.choices[0].message
