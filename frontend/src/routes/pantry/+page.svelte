@@ -11,21 +11,18 @@
 
 	const formSubmit = async () => {
 		const formData = new FormData();
-		formData.append('file', files[0]);
-
-		let reader = new FileReader();
-		reader.readAsDataURL(files[0]);
-		reader.onload = (e) => {
-			avatar = e.target?.result;
-		};
+		formData.append('image', files[0]);
 
 		try {
-			const res = await fetch('http://localhost:8000/cc/api/predict-img', {
+			const res = await fetch('http://localhost:7001/yolo5', {
 				method: 'POST',
 				body: formData
 			});
 			const data = await res.json();
-			result = data;
+			avatar = data.img.slice(15);
+
+			for (let dx of data.op) {
+			}
 		} catch (error) {
 			console.error(error);
 		}
@@ -62,9 +59,9 @@
 	}
 </script>
 
-<div class="bg-purple-200 min-h-screen">
+<div class="min-h-screen bg-pink-100">
 	<div class="mx-auto max-w-screen-xl p-4">
-		<h1 class="mb-6 text-xl font-semibold">CalorieCraft AI</h1>
+		<h1 class="mb-6 text-xl font-semibold">PantryPilot AI</h1>
 		{#if !selectedFood}
 			<form on:submit|preventDefault={formSubmit} class="flex items-end gap-4">
 				<div class="form-control">
@@ -74,17 +71,17 @@
 					<input
 						type="file"
 						bind:files
-						name="file"
+						name="image"
 						id="file"
 						class="file-input file-input-bordered max-w-72"
 					/>
 				</div>
-				<button type="submit" class="btn btn-accent mt-4">What food is this?</button>
+				<button type="submit" class="btn btn-accent mt-4">What is in this pantry?</button>
 			</form>
 
 			{#if avatar}
 				<div class="mt-4">
-					<img src={avatar} alt="avatar" class="h-32 w-32 rounded-md" />
+					<img src={avatar} alt="avatar" class="h-full w-full rounded-md" />
 				</div>
 			{/if}
 

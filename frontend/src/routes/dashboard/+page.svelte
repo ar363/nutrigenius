@@ -48,23 +48,29 @@
 		</table>
 	</div>
 	<div class="mt-6 grid grid-cols-4 gap-4">
-		<div class="card bg-base-100 w-full max-w-96 border shadow-xl">
-			<div class="card-body">
-				<h2 class="card-title">CalorieCraft AI</h2>
-				<p>Track nutrition intake using images of your food</p>
-				<div class="card-actions justify-start">
-					<a class="btn btn-primary btn-sm mt-3" href="/cal">Go to page</a>
+		<a href="/cal">
+
+			<div class="card bg-purple-200 w-full max-w-96 border shadow-xl">
+				<div class="card-body">
+					<h2 class="card-title">CalorieCraft AI</h2>
+					<p>Track nutrition intake using images of your food</p>
+					<!-- <div class="card-actions justify-start">
+						<a class="btn btn-primary btn-sm mt-3" href="/cal">Go to page</a>
+					</div> -->
 				</div>
 			</div>
-		</div>
-		<div class="card bg-base-100 w-full max-w-96 border shadow-xl">
-			<div class="card-body">
-				<h2 class="card-title">PantryPilot AI</h2>
-				<p>Check how much stock of food your refridgerator has</p>
-				<div class="card-actions justify-start">
-					<a class="btn btn-primary btn-sm mt-3" href="/cal">Go to page</a>
+		</a>
+		<a href="/pantry">
+		
+			<div class="card bg-pink-100 w-full max-w-96 border shadow-xl">
+				<div class="card-body">
+					<h2 class="card-title">PantryPilot AI</h2>
+					<p>Check how much stock of food your refridgerator has</p>
+					<!-- <div class="card-actions justify-start">
+						<a class="btn btn-primary btn-sm mt-3" href="/pantry">Go to page</a>
+					</div> -->
 				</div>
 			</div>
-		</div>
+		</a>
 	</div>
 </div>

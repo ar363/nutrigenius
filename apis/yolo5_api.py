@@ -3,10 +3,21 @@ import torch
 from fastapi import FastAPI, UploadFile
 import uuid
 from pathlib import Path
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="YOLOv5 API")
 
 yolo_model = torch.hub.load("ultralytics/yolov5", "yolov5s")
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.post("/yolo5")
