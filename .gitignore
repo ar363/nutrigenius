@@ -4,3 +4,4 @@ data/
 files/
 __pycache__/
 db*.sqlite3
+media/

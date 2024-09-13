@@ -1,7 +1,8 @@
 import PIL.Image
 import torch
 from fastapi import FastAPI, UploadFile
-import PIL
+import uuid
+from pathlib import Path
 
 app = FastAPI(title="YOLOv5 API")
 
@@ -14,4 +15,8 @@ def yolo5(image: UploadFile):
     image = PIL.Image.open(image.file)
 
     results = yolo_model(image)
-    return results.pandas().xyxy[0].to_dict(orient="records")
+    rr = results.render()
+    yim = PIL.Image.fromarray(rr[0])
+    savepath = "frontend/static/media/" + uuid.uuid4().hex + ".jpg"
+    yim.save(savepath)
+    return {"op": results.pandas().xyxy[0].to_dict(orient="records"), "img": savepath}

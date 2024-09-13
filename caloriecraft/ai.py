@@ -69,7 +69,7 @@ def us_predictor(decoded_image):
         json_op.append(
             {
                 "name": coll_output[0][i].replace("_", " ").title(),
-                "confidence": (float(coll_output[2][i]) * 100),
+                "confidence": (float(coll_output[2][i]) * 100) * 100 - 100,
             }
         )
 
