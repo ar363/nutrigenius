@@ -65,3 +65,8 @@ class Pantry(models.Model):
 
     class Meta:
         verbose_name_plural = "Pantries"
+
+
+def get_pantry_str():
+    pantry = "\n".join([f"{i.name} - {i.quantity}" for i in Pantry.objects.all()])
+    return pantry

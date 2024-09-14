@@ -5,6 +5,18 @@
 	import 'chart.js/auto'; // Ensure you import this to auto-register all components
 
 	let pastMeals = [];
+	let sums = {
+		protein: 0,
+		fat: 0,
+		carbs: 0,
+		calories: 0
+	};
+	const dailyNutrientGoals = {
+		protein: 60,
+		fat: 55,
+		carbs: 275,
+		calories: 2400
+	};
 
 	onMount(async () => {
 		const res = await fetch('http://localhost:8000/cc/api/past-meals', {
@@ -13,7 +25,8 @@
 			}
 		});
 		const body = await res.json();
-		pastMeals = body;
+		pastMeals = body.meals;
+		sums = body.sums;
 	});
 
 	function relTime(dt: string) {
@@ -39,7 +52,7 @@
 		<img src="/nutrigeniuslogo.png" alt="" class="-ml-[20px] w-[450px]" />
 	</h1>
 	<div class="mt-4">
-		<div class="mb-5 mt-6 grid md:grid-cols-4 gap-4">
+		<div class="mb-5 mt-6 grid gap-4 md:grid-cols-4">
 			<a href="/cal">
 				<div class="card w-full max-w-96 border bg-purple-200 shadow-xl">
 					<div class="card-body">
@@ -72,6 +85,52 @@
 					</div>
 				</div>
 			</a>
+		</div>
+
+		<h2 class="mt-6 mb-4 text-lg">Today's Nutrition</h2>
+
+
+		<div class="flex items-center gap-8">
+			<div class="flex flex-col items-center">
+				<div
+					class="radial-progress text-primary"
+					style={`--value:${(100 * sums.protein) / dailyNutrientGoals.protein};`}
+					role="progressbar"
+				>
+					{Math.round((100 * sums.protein) / dailyNutrientGoals.protein)}%
+				</div>
+				<div class="text-primary">Protien</div>
+			</div>
+			<div class="flex flex-col items-center">
+				<div
+					class="radial-progress text-purple-700"
+					style={`--value:${(100 * sums.fat) / dailyNutrientGoals.fat};`}
+					role="progressbar"
+				>
+					{Math.round((100 * sums.fat) / dailyNutrientGoals.fat)}%
+				</div>
+				<div class="text-purple-700">Fat</div>
+			</div>
+			<div class="flex flex-col items-center">
+				<div
+					class="radial-progress text-green-700"
+					style={`--value:${(100 * sums.carbs) / dailyNutrientGoals.carbs};`}
+					role="progressbar"
+				>
+					{Math.round((100 * sums.carbs) / dailyNutrientGoals.carbs)}%
+				</div>
+				<div class="text-green-700">Carbs</div>
+			</div>
+			<div class="flex flex-col items-center">
+				<div
+					class="radial-progress text-orange-600"
+					style={`--value:${(100 * sums.calories) / dailyNutrientGoals.calories};`}
+					role="progressbar"
+				>
+					{Math.round((100 * sums.calories) / dailyNutrientGoals.calories)}%
+				</div>
+				<div class="text-orange-600">Calories</div>
+			</div>
 		</div>
 
 		<h2 class="mt-4 text-lg">Past meals</h2>

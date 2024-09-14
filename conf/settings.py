@@ -7,7 +7,7 @@ env = environ.Env(
     ALLOWED_HOSTS=(list, []),
     CORS_ALLOWED_ORIGINS=(list, []),
     CORS_ALLOW_ALL_ORIGINS=(bool, False),
-    OPENAI_API_KEY=(str),
+    GEMINI_API_KEY=(str),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -126,4 +126,11 @@ CORS_ALLOW_ALL_ORIGINS = env("CORS_ALLOW_ALL_ORIGINS")
 
 CORS_ALLOW_CREDENTIALS = True
 
-OPENAI_API_KEY = env("OPENAI_API_KEY")
+GEMINI_API_KEY = env("GEMINI_API_KEY")
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "my_cache_table",
+    }
+}
