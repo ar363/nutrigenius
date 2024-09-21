@@ -41,9 +41,9 @@
 		</div>
 		<nav>
 			<ul class="flex space-x-4">
-				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">Home</a></li>
+				<!-- <li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">Home</a></li>
 				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">About</a></li>
-				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">Contact</a></li>
+				<li><a data-sveltekit-reload href="#" class="text-gray-600 hover:text-gray-800">Contact</a></li> -->
 			</ul>
 		</nav>
 	</header>
