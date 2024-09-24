@@ -4,7 +4,25 @@
 	import { formatDistance } from 'date-fns';
 	import 'chart.js/auto'; // Ensure you import this to auto-register all components
 
-	let pastMeals = [];
+	type FoodItemData = {
+		food: string;
+		calories: number;
+		protein: number;
+		fat: number;
+		carbs: number;
+		vitamins: string;
+		fiber: number;
+		sodium: number;
+	};
+
+	type FoodItem = {
+		food: string;
+		quantity: number;
+		created_at: string;
+		food_data: FoodItemData;
+	};
+
+	let pastMeals: FoodItem[] = [];
 	let sums = {
 		protein: 0,
 		fat: 0,
@@ -87,8 +105,7 @@
 			</a>
 		</div>
 
-		<h2 class="mt-6 mb-4 text-lg">Today's Nutrition</h2>
-
+		<h2 class="mb-4 mt-6 text-lg">Today's Nutrition</h2>
 
 		<div class="flex items-center gap-8">
 			<div class="flex flex-col items-center">

@@ -3,7 +3,7 @@
 	import Progress from './Progress.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	let weight = 70;
+	let weight: number | string = 70;
 	let goal = '';
 	let activity_level = '';
 	let suggestion = '';
@@ -45,7 +45,7 @@
 
 	const handleSubmit = async () => {
 		const formData = {
-			weight: Number.parseInt(weight),
+			weight: typeof weight === 'number' ? weight : parseInt(weight),
 			goal,
 			activity_level
 		};
@@ -90,7 +90,9 @@
 <div class="mx-auto max-w-screen-xl p-4">
 	<h1 class="text-2xl font-bold">EatSmart Dietician</h1>
 
-	<SvelteMarkdown source={suggestion} />
+	<div class="prose">
+		<SvelteMarkdown source={suggestion} />
+	</div>
 
 	<p>Please answer the following questions to get a personalised diet recommendation</p>
 	<form method="post" on:submit|preventDefault={handleSubmit}>

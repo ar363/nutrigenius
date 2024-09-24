@@ -25,5 +25,7 @@
 <div class="mx-auto max-w-screen-xl p-4">
 	<h1 class="text-2xl font-bold mb-6">RecipeRevolution suggestion:</h1>
 
-	<SvelteMarkdown source={suggestion} />
+	<div class="prose">
+		<SvelteMarkdown source={suggestion} />
+	</div>
 </div>

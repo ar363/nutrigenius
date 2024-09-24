@@ -2,13 +2,29 @@
 	import { goto } from '$app/navigation';
 	import { getUserToken } from '$lib/frontendUtils';
 
+	type FoodItemData = {
+		food: string;
+		calories: number;
+		protein: number;
+		fat: number;
+		carbs: number;
+		vitamins: string;
+		fiber: number;
+		sodium: number;
+	};
+
+	type PredictionResult = { name: string; confidence: number; food_info: FoodItemData };
+
 	let files: FileList;
-	let result: object;
-	let avatar;
+	let result: {
+		ind: PredictionResult[];
+		us: PredictionResult[];
+	};
+	let avatar: string;
 	let activeTab: 'IN' | 'US' = 'IN';
 	let tabViewMore = false;
 	let selectedFood: string;
-	let meal: object;
+	let meal: FoodItemData;
 
 	const formSubmit = async () => {
 		const formData = new FormData();
@@ -17,7 +33,7 @@
 		let reader = new FileReader();
 		reader.readAsDataURL(files[0]);
 		reader.onload = (e) => {
-			avatar = e.target?.result;
+			avatar = e.target?.result as string;
 		};
 
 		try {
@@ -33,7 +49,7 @@
 	};
 
 	const addFoodToDiet = async () => {
-		const formData = new FormData(document.querySelector('#add_food_form'));
+		const formData = new FormData(document.querySelector('#add_food_form') as HTMLFormElement);
 
 		try {
 			const res = await fetch('http://localhost:8000/cc/api/add-food', {
@@ -58,7 +74,7 @@
 		return Math.round(num * 100) / 100;
 	}
 
-	function setSelectedFood(food: string) {
+	function setSelectedFood(food: PredictionResult) {
 		selectedFood = food.name;
 		meal = food.food_info;
 	}
@@ -213,7 +229,7 @@
 			<h2 class="mt-4 text-2xl font-bold">{selectedFood}</h2>
 
 			{#if meal}
-				<h3 class="mt-4 text-md font-semibold">Per serving:</h3>
+				<h3 class="text-md mt-4 font-semibold">Per serving:</h3>
 				<ul class="ml-4 mt-2 list-disc">
 					<li>{meal.calories} calories</li>
 					<li>{meal.protein}g Protein</li>

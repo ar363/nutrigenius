@@ -3,8 +3,8 @@
 	import { getUserToken } from '$lib/frontendUtils';
 
 	let files: FileList;
-	let result: object;
-	let avatar;
+	let result: { name: string; count: number }[];
+	let avatar: string;
 	let activeTab: 'IN' | 'US' = 'IN';
 	let tabViewMore = false;
 	let selectedFood: string;
@@ -59,7 +59,7 @@
 	};
 
 	const addFoodToDiet = async () => {
-		const formData = new FormData(document.querySelector('#add_food_form'));
+		const formData = new FormData(document.querySelector('#add_food_form') as HTMLFormElement);
 
 		try {
 			const res = await fetch('http://localhost:8000/cc/api/add-food', {

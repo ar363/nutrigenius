@@ -9,21 +9,22 @@ This project won the **"User Experience Excellence Award"** in the hackathon
 
 
 
-## Screenshots & Relevant stuff
-
-### UI Screenshots
+## UI Screenshots
 
 ![](./assets/ss1.jpeg)
 ![](./assets/ss2.jpeg)
+![](./assets/ss4.png)
+![](./assets/ss5.png)
+![](./assets/ss3.png)
 
-### Certificate
+## Certificate
 
 ![](./assets/cert.jpeg)
 
-### Platform architecture
+## Platform architecture
 ![platform architecture](./assets/arch.png)
 
-### Technologies Used
+## Technologies Used
 - Django
 - Django Ninja
 - Sveltekit
@@ -37,5 +38,5 @@ This project won the **"User Experience Excellence Award"** in the hackathon
 
 [Hackathon Presentation](./assets/presentation.pdf)
 
-### Special thanks
+## Special thanks
 Thanks a lot to the Colossus organisers for managing the hackathon so well. It was their first time organising a hackathon, and they did amazing <3.
